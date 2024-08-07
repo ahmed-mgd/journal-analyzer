@@ -1,59 +1,59 @@
 const entriesRouter = require('express').Router()
 const Entry = require('../models/entry')
 
-entriesRouter.get('/', (request, response) => {
+entriesRouter.get('/', (req, res) => {
   Entry.find({}).then((entry) => {
-    response.json(entry)
+    res.json(entry)
   })
 })
 
-entriesRouter.get('/:id', (request, response, next) => {
-  Entry.findById(request.params.id)
+entriesRouter.get('/:id', (req, res, next) => {
+  Entry.findById(req.params.id)
     .then((entry) => {
       if (entry) {
-        response.json(entry)
+        res.json(entry)
       } else {
-        response.status(404).end()
+        res.status(404).end()
       }
     })
     .catch((error) => next(error))
 })
 
-entriesRouter.post('/', (request, response, next) => {
-  const body = request.body
+entriesRouter.post('/', (req, res, next) => {
+  const body = req.body
 
   const entry = new Entry({
+    date: body.date,
     content: body.content,
-    important: body.important || false,
   })
 
   entry
     .save()
     .then((savedEntry) => {
-      response.json(savedEntry)
+      res.json(savedEntry)
     })
     .catch((error) => next(error))
 })
 
-entriesRouter.delete('/:id', (request, response, next) => {
-  Entry.findByIdAndDelete(request.params.id)
+entriesRouter.delete('/:id', (req, res, next) => {
+  Entry.findByIdAndDelete(req.params.id)
     .then(() => {
-      response.status(204).end()
+      res.status(204).end()
     })
     .catch((error) => next(error))
 })
 
-entriesRouter.put('/:id', (request, response, next) => {
-  const body = request.body
+entriesRouter.put('/:id', (req, res, next) => {
+  const body = req.body
 
   const entry = {
+    date: body.date,
     content: body.content,
-    important: body.important,
   }
 
-  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+  Entry.findByIdAndUpdate(req.params.id, entry, { new: true })
     .then((updatedEntry) => {
-      response.json(updatedEntry)
+      res.json(updatedEntry)
     })
     .catch((error) => next(error))
 })
